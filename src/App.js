@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useEffect, useState } from 'react'
+import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions'
 
-function App() {
+mapboxgl.accessToken =
+  "pk.eyJ1IjoiaGltYXJrcyIsImEiOiJja3R1ZzB0bzExemlyMm9wOXN1dmdtYXliIn0.10tKlktK0JWd6THSQwqn3Q";
+
+export default function App() {
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const [lng, setLng] = useState(-71.0898);
+  const [lat, setLat] = useState(42.3391);
+  const [zoom, setZoom] = useState(14.44);
+  const directions = new MapboxDirections({
+    accessToken: mapboxgl.accessToken,
+  })
+
+  useEffect(() => {
+    if (map.current) return; // initialize map only once
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: [lng, lat],
+      zoom: zoom,
+    }).addControl(directions, 'top-left');
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div ref={mapContainer} className="map-container" />
     </div>
   );
 }
-
-export default App;
